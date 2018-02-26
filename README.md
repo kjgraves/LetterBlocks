@@ -5,7 +5,7 @@ A fun side project to find a better combinations of letters for my daughter's le
 ![alt text](https://github.com/kjgraves/LetterBlocks/blob/master/VtechCube.jpg "The Vtech Alphabet Activity Cube!!")
 
 
-As you can somewhat make out in the picture, each block has two letters on it. One on each side, giving thirteen total blocks. HOWEVER, the letters are not distributed in such a way to spell words with the blocks. For instance, R and A are on the same block and K and X are the same block. Tons of words and names have both R and A in them, and not many have both K and X! Like any caring parent, I decided that it is time to start building algorithms and writing code to better figure out how the letters should be arranged to better spell words. We hear multiple times every day, "let's play with letter blocks aaall day!" Well, singing lady in the box, it would be a lot more fun if you could actually spell things!!
+As you can somewhat make out in the picture, each block has two letters on it. One letter is on each side, giving thirteen total blocks. HOWEVER, the letters are not distributed in such a way to spell words with the blocks. For instance, R and A are on the same block and K and X are the same block. Tons of words and names have both R and A in them, and not many have both K and X! Like any caring parent, I decided that it is time to start building algorithms and writing code to better figure out how the letters should be arranged to better spell words. We hear multiple times every day, "let's play with letter blocks aaall day!" Well, singing lady in the box, it would be a lot more fun if you could actually spell things!!
 
 ## How bad is it
 
