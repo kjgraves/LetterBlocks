@@ -25,6 +25,8 @@ Instead, I calculated a better combination directly from my dictionary of words 
 On to the results! 
 
 Here is the best grouping of letter pairs from my algorithm:
+
+
 | L1 | L2 |
 |---|---|
 | e | q |
