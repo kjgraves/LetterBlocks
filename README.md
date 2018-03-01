@@ -26,20 +26,20 @@ On to the results!
 
 Here is the best grouping of letter pairs from my algorithm:
 
--|-
-e|q
-a|z
-n|x
-o|k
-i|j
-r|v
-t|d
-l|f
-h|b
-s|w
-u|p
-m|g
-c|y
+|---|---|
+|e|q|
+|a|z|
+|n|x|
+|o|k|
+|i|j|
+|r|v|
+|t|d|
+|l|f|
+|h|b|
+|s|w|
+|u|p|
+|m|g|
+|c|y|
 
 
 Just visually, that makes a lot more sense. Commonly used vowels are used with less commonly used letters (like e and q, o and k, and a and z). Using these letters, we can spell 87% of all of the names/words without double letters. Woohoo! That is so much better!
