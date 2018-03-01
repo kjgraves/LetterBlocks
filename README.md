@@ -27,7 +27,7 @@ On to the results!
 Here is the best grouping of letter pairs from my algorithm:
 
 
-| L1 | L2 |
+| Letter 1 | Letter 2 |
 |---|---|
 | e | q |
 | a | z |
