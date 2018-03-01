@@ -12,24 +12,48 @@ import numpy as np
 import itertools
 import matplotlib.pyplot as plt 
 
+# FUNCTIONS
+def double_letters(word):
+    """
+    Simple function to test for duplicated letters in a word.
+    INPUT: word - a string of charaters
+    OUTPUT: True - if there are any duplicated letters
+            False - if there are no duplicated letters
+    """
+    retval = False
+    for i in range(len(word)-1):
+        for j in range(i+1,len(word)):
+            if word[i] == word[j]:
+                retval = True
+                break
+    return retval
+
+# Main Program
+
 alphabet = "abcdefghijklmnopqrstuvwxyz"
 Nlet = 26
-combs = list(itertools.combinations(alphabet, 2))
+
+# Find all of the combinations of the the letters
+combs = np.array(list(itertools.combinations(alphabet, 2)))
 Ncombs = len(combs)
 
-#print(Ncombs)
-
-Score = np.zeros(Ncombs)
+print("There are {0} different combinations from 26 letters".format(Ncombs))
 
 # Load in testing data
 names = np.genfromtxt("Top200Names2010s.txt",dtype="U20")
-
 words = np.genfromtxt("1000CommonWords.txt",dtype="U20")
 
-#print(names)
+# Remove any double letters because the letter blocks can never spell them
+ind_dl = np.where([not double_letters(name) for name in names])
+names = names[ind_dl]
+ind_dl = np.where([not double_letters(word) for word in words])
+words    = words[ind_dl]
 
+# Initialize variable to hold score for each letter combination
+Score = np.zeros(Ncombs)
 
-
+# Loop to test if both letters are in each name/word 
+# The score is the percentage of names/words that have both letters
 for i in range(Ncombs):
     Nboth  = 0
     Nneith = 0
@@ -37,10 +61,10 @@ for i in range(Ncombs):
         l_let1 = False
         l_let2 = False
         for k in range(len(names[j])):
-#            print(names[j][k].lower(),combs[i][0],names[k].lower() == combs[i][0])
-            if names[j][k].lower() == combs[i][0]:
+#            print(names[j][k].lower(),combs[i,0],names[k].lower() == combs[i,0])
+            if names[j][k].lower() == combs[i,0]:
                 l_let1 = True
-            if names[j][k].lower() == combs[i][1]:
+            if names[j][k].lower() == combs[i,1]:
                 l_let2 = True
         if l_let1 and l_let2:
             Nboth += 1
@@ -50,9 +74,9 @@ for i in range(Ncombs):
         l_let1 = False
         l_let2 = False
         for k in range(len(words[j])):
-            if words[j][k] == combs[i][0]:
+            if words[j][k] == combs[i,0]:
                 l_let1 = True
-            if words[j][k] == combs[i][1]:
+            if words[j][k] == combs[i,1]:
                 l_let2 = True
         if l_let1 and l_let2:
             Nboth += 1
@@ -63,29 +87,44 @@ for i in range(Ncombs):
     Score[i] = Nboth/(Nboth+Nneith)
 
 
-
-combs = np.asarray(combs)
-
 for i in range(Ncombs):
     print("{0} + {1} are in {2}% of names/words".format(combs[i,0],combs[i,1],Score[i]*100))
 
+# Sort by the Score
 ind_Score = np.argsort(Score)
 combs = combs[ind_Score]
 Score = Score[ind_Score]
 
 
-plt.hist(Score)
-plt.savefig("DUMP.png")
+plt.hist(Score*100,edgecolor='k',normed=True,bins=20)
+plt.xlabel("Percentage of words containing both letters")
+plt.ylabel("Number of Pairs")
+plt.xlim(0,25)
+plt.savefig("AllPairScore.png")
+plt.clf()
+
+ind_e = np.where((combs[:,0] == 'e') | (combs[:,1] == 'e'))
+
+plt.hist(Score[ind_e]*100,edgecolor='k',normed=True)
+plt.xlabel("Percentage of words containing \"e\" and another letter")
+plt.ylabel("Number of Pairs")
+plt.xlim(0,25)
+plt.savefig("EPairScore.png")
+plt.clf()
+
+ind_q = np.where((combs[:,0] == 'q') | (combs[:,1] == 'q'))
+
+plt.hist(Score[ind_e]*100,edgecolor='k',normed=True)
+plt.xlabel("Percentage of words containing \"q\" and another letter")
+plt.ylabel("Number of Pairs")
+plt.xlim(0,25)
+plt.savefig("QPairScore.png")
+plt.clf()
 
 
-
-# Get scores by letter
-#ind_let = list(alphabet)
-
-#ind_let_pair_score = np.empty((Nlet,1,Nlet),dtype=[('blet', 'U1'),('plet', 'U1'), ('score1', 'f8'),('score2', 'f8'),('score3', 'f8'),('score4', 'f8'),('score5', 'f8'),('score6', 'f8'),('score7', 'f8'),('score8', 'f8'),('score9', 'f8'),('score10', 'f8'),('score11', 'f8'),('score12', 'f8'),('score13', 'f8'),('score14', 'f8'),('score15', 'f8'),('score16', 'f8'),('score17', 'f8'),('score18', 'f8'),('score19', 'f8'),('score20', 'f8'),('score21', 'f8'),('score22', 'f8'),('score23', 'f8'),('score24', 'f8'),('score25', 'f8')])
-
+# Get scores by each letter
 ind_let_pair_score = np.zeros((Nlet,Nlet))
-#ind_let_pair_score = [[0 for x in range(Nlet-1)] for y in range(Nlet)]
+# Note: The diagonals of this 2D array don't mean anything (and we will set them to NaN)
 
 for i in range(Nlet):
     for j in range(Nlet):
@@ -93,24 +132,72 @@ for i in range(Nlet):
             ind_let_pair_score[i,j] = np.nan
         else:
             for k in range(len(Score)):
-#                print(i, ord(combs[k,0])-97,j,ord(combs[k,1])-97)
                 if ((i == ord(combs[k,0])-97 and j == ord(combs[k,1])-97) or 
                    (i == ord(combs[k,1])-97 and j == ord(combs[k,0])-97)):
-#                    print(chr(i+97),chr(j+97),combs[k,0],combs[k,1])
-#                    print("in")
                     ind_let_pair_score[i][j] = Score[k]
                     break
 
+# Before we jump into the actual alorithm for calulating a good way 
+#   to pair the letter blocks, lets first find out:
+#   2) How the letter blocks score as they are
+
+# How the letter blocks score as they are
+# Here are the pairings
+block_pairs = np.array([['f','s'],['b','o'],['j','w'],['z','m'],['v','e'],['r','a'],['n','i'],
+                        ['d','q'],['h','u'],['l','y'],['p','c'],['t','g'],['x','k']],dtype='U1')
+
+# Find all of the words that can be spelled with this grouping of pairs
+Nspell   = 0
+NNospell = 0
+for name in names:
+    lcanspell = True
+    for pair in block_pairs:
+        l_let1 = False
+        l_let2 = False
+        for let in name:
+            if let.lower() == pair[0]:
+                l_let1 = True
+            elif let.lower() == pair[1]:
+                l_let2 = True
+        if l_let1 and l_let2:
+            lcanspell = False
+            break
+    if lcanspell:
+        Nspell += 1
+    else:
+        NNospell += 1
+for word in words:
+    lcanspell = True
+    for pair in block_pairs:
+        l_let1 = False
+        l_let2 = False
+        for let in word:
+            if let.lower() == pair[0]:
+                l_let1 = True
+            elif let.lower() == pair[1]:
+                l_let2 = True
+        if l_let1 and l_let2:
+            lcanspell = False
+            break
+    if lcanspell:
+        Nspell += 1
+    else:
+        NNospell += 1
+
+print("Scorecard!")
+print("The blocks as constructed can spell {0:5.2f}% of the words and names".format(Nspell/(Nspell+NNospell)*100))
 
 
-# For each letter find the minimum value for a pair,
-# then take the maximum(???) value from that list
+# Actual Algorithm Part!
 
+# First Intialize Arrays
 pairs    = np.empty((Nlet//2,2),dtype="U1")
 ind_mins = np.zeros(Nlet,dtype=int)
 sc_mins  = np.zeros(Nlet)
 
-
+# MY SIMPLE ALGORITHM
+# For each letter find the minimum Score for all pairs,
+# then take the MAXIMUM value from those scores
 
 for n in range(Nlet//2):
     ind_mins[:] = 0
@@ -122,7 +209,6 @@ for n in range(Nlet//2):
             ind_mins[i] = np.nanargmin(ind_let_pair_score[i])
             sc_mins[i]  = np.nanmin(ind_let_pair_score[i])
         else:
-#            print(i,ind_let_pair_score[i,:])
             ind_mins[i] = 99 # Should never choose this
             sc_mins[i]  = np.nan
 
@@ -138,7 +224,12 @@ for n in range(Nlet//2):
     ind_let_pair_score[pair_ind,:] = np.nan
     ind_let_pair_score[:,pair_ind] = np.nan
 
-    
+
+
+print("Best Pairs:")
+for i in range(Nlet//2):
+    print("{0} + {1}".format(pairs[i,0],pairs[i,1]))   
+
 # Score?
 Nspell   = 0
 NNospell = 0
@@ -157,6 +248,7 @@ for name in names:
             lcanspell = False
             break
     if lcanspell:
+#        print("'{0}',".format(name))
         Nspell += 1
     else:
         NNospell += 1
@@ -179,55 +271,8 @@ for word in words:
     else:
         NNospell += 1
 
-print("Scorecard!")
 print("My simple algorithm can spell {0:5.2f}% of the words and names".format(Nspell/(Nspell+NNospell)*100))
 
-
-block_pairs = np.array([['f','s'],['b','o'],['j','w'],['z','m'],['v','e'],['r','a'],['n','i'],
-                        ['d','q'],['h','u'],['l','y'],['p','c'],['t','g'],['x','k']],dtype='U1')
-
-
-Nspell   = 0
-NNospell = 0
-for name in names:
-    lcanspell = True
-    for pair in block_pairs:
-        l_let1 = False
-        l_let2 = False
-        for let in name:
-#            print(names[j][k].lower(),combs[i][0],names[k].lower() == combs[i][0])
-            if let.lower() == pair[0]:
-                l_let1 = True
-            elif let.lower() == pair[1]:
-                l_let2 = True
-        if l_let1 and l_let2:
-            lcanspell = False
-            break
-    if lcanspell:
-        Nspell += 1
-    else:
-        NNospell += 1
-for word in words:
-    lcanspell = True
-    for pair in block_pairs:
-        l_let1 = False
-        l_let2 = False
-        for let in word:
-#            print(names[j][k].lower(),combs[i][0],names[k].lower() == combs[i][0])
-            if let.lower() == pair[0]:
-                l_let1 = True
-            elif let.lower() == pair[1]:
-                l_let2 = True
-        if l_let1 and l_let2:
-            lcanspell = False
-            break
-    if lcanspell:
-        Nspell += 1
-    else:
-        NNospell += 1
-
-
-print("The blocks as constructed can spell {0:5.2f}% of the words and names".format(Nspell/(Nspell+NNospell)*100))
 
 
 
