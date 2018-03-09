@@ -9,7 +9,7 @@ As you can somewhat make out in the picture, each block has two letters on it. O
 
 ## How bad is it
 
-Here are a pictures of both sides of all of the letter blocks. The right-most block in the top picture corresponds to the left-most block in the bottom (and vise-versa). The colors also help.
+Here are pictures of both sides of all of the letter blocks. The right-most block in the top picture corresponds to the left-most block in the bottom (and vise-versa). The colors also help.
 
 ![alt text](https://github.com/kjgraves/LetterBlocks/blob/master/WordBlocks_side1.jpg "Side 1")
 ![alt text](https://github.com/kjgraves/LetterBlocks/blob/master/WordBlocks_side2.jpg "Side 2")
